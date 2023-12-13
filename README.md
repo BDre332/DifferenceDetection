@@ -24,7 +24,7 @@ This project is implemented in Python using OpenCV and scikit-image, libraries e
 ## How to Run
 
 1. Install the required Python packages: `pip install opencv-python scikit-image numpy`
-2. Run the main script: `python main_script.py`
+2. Run the main script: `python -m difference_detection.main`
 
 Please note that this project is under development, and more features are planned for the future. Contributions, suggestions, and issue reports are welcome!
 
