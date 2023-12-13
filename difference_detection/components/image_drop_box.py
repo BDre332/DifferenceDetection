@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from .image_display import ImageDisplay
 
 class ImageDropBox(QWidget):
     def __init__(self, parent=None):
@@ -9,9 +10,11 @@ class ImageDropBox(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.label = QLabel('Drag and drop an image here.', self)
-        self.label.setAlignment(Qt.AlignCenter)
         self.layout = QVBoxLayout(self)
+        self.imageDisplay = ImageDisplay(self)
+        self.layout.addWidget(self.imageDisplay)
+        self.label = QLabel("Drag and drop and image here.", self)
+        self.label.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.label)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -23,4 +26,5 @@ class ImageDropBox(QWidget):
     def dropEvent(self, event: QDropEvent):
         files = [u.toLocalFile() for u in event.mimeData().urls()]
         self.image_path = files[0]
-        self.label.setText(self.image_path.split('/')[-1])
+        self.imageDisplay.displayImage(self.image_path)
+
