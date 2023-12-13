@@ -5,11 +5,18 @@ from skimage.measure import label
 from skimage.color import label2rgb, rgb2lab, deltaE_cie76
 
 class ImageAnalyzer:
-    def __init__(self, image1_path, image2_path):
-        self.image1 = cv2.imread(image1_path)
-        self.image2 = cv2.imread(image2_path)
-
-    def create_superpixels(self, n_segments=1000):
+    def __init__(self, image1, image2):
+        if isinstance(image1,str):
+            self.image1 = cv2.imread(image1)
+        else:
+            self.image1 = image1
+            
+        if isinstance(image2, str):  
+            self.image2 = cv2.imread(image2)  
+        else:  
+            self.image2 = image2  
+  
+    def create_superpixels(self, n_segments=500):
         self.superpixels1 = slic(self.image1, n_segments=n_segments, start_label=1)
         self.superpixels2 = slic(self.image2, n_segments=n_segments, start_label=1)
 
