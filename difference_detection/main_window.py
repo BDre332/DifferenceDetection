@@ -8,12 +8,12 @@ from .processing.image_analysis import ImageAnalyzer
 from .processing.video_processor import VideoProcessor
 import cv2
 import os
- 
-    
+   
 class MainWindow(QMainWindow):    
     def __init__(self, parent=None):    
-        super().__init__(parent)    
+        super().__init__(parent)  
         self.initUI()    
+        self.video_thread = VideoThread() 
     
     def initUI(self):    
         self.setWindowTitle("File Difference Analyzer")    
@@ -74,31 +74,32 @@ class MainWindow(QMainWindow):
     def analyze_files(self):    
         file1 = self.dropbox1.file_path    
         file2 = self.dropbox2.file_path    
-    
+
         # Check file types and process accordingly  
         if self.is_video(file1):  
             processor1 = VideoProcessor(file1)  
             image1 = processor1.combine_frames()  
         else:  
             image1 = cv2.imread(file1)  
-    
+
         if self.is_video(file2):    
             processor2 = VideoProcessor(file2)    
             image2 = processor2.combine_frames()  
         else:  
             image2 = cv2.imread(file2)  
-    
-        self.analysis_thread.set_reference_image(file1) 
+
         # Ensure images are successfully loaded/created  
         if image1 is None or image2 is None:  
             print("Failed to get image")  
             return  
-    
-        analyzer = ImageAnalyzer(image1, image2)  
-        analyzer.create_superpixels(n_segments=500)    
-        result = analyzer.highlight_differences(threshold=30)    
-    
-        self.displayImage(result)  
+
+        # Initialize ImageAnalyzer here, where image1 and image2 are defined
+        self.analyzer = ImageAnalyzer(image1, image2) 
+        # Call set_reference_image on the analyze
+        self.analyzer.create_superpixels(n_segments=500)    
+        result = self.analyzer.highlight_differences(threshold=30)    
+
+        self.displayImage(result)
   
     def displayImage(self, image):  
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  
