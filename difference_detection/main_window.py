@@ -12,8 +12,9 @@ import os
 class MainWindow(QMainWindow):    
     def __init__(self, parent=None):    
         super().__init__(parent)  
-        self.initUI()    
         self.video_thread = VideoThread() 
+        self.video_thread.change_pixmap_signal.connect(self.update_image)   
+        self.initUI()      
     
     def initUI(self):    
         self.setWindowTitle("File Difference Analyzer")    
@@ -29,6 +30,7 @@ class MainWindow(QMainWindow):
         self.resultDisplay = ImageDisplay(self)    
         self.layout.addWidget(self.resultDisplay)    
   
+        #self.setCameraBlack()
         # Create the video capture thread  
         self.video_thread = VideoThread()  
         self.video_thread.change_pixmap_signal.connect(self.update_image)  
@@ -41,6 +43,9 @@ class MainWindow(QMainWindow):
         self.stop_button = QPushButton('Stop Video', self)  
         self.stop_button.clicked.connect(self.stop_video)  
         self.layout.addWidget(self.stop_button)  
+        
+        #set up black screen
+        
   
         self.setCentralWidget(widget)   
   
@@ -50,26 +55,11 @@ class MainWindow(QMainWindow):
   
     def start_video(self):  
         self.video_thread.start() 
-        # Clear the display and show "Camera stopped" message  
-        pixmap = QPixmap(self.resultDisplay.label.size())  
-        pixmap.fill(QColor('black'))  
-        painter = QPainter(pixmap)  
-        painter.setFont(QFont('Arial', 30))  
-        painter.setPen(QColor('white'))  
-        painter.drawText(pixmap.rect(), Qt.AlignCenter, "Camera stopped")  
-        painter.end()  
-        self.resultDisplay.label.setPixmap(pixmap)   
   
     def stop_video(self):  
         self.video_thread.stop()  
-        pixmap = QPixmap(self.resultDisplay.label.size())  
-        pixmap.fill(QColor('black'))  
-        painter = QPainter(pixmap)  
-        painter.setFont(QFont('Arial', 30))  
-        painter.setPen(QColor('white'))  
-        painter.drawText(pixmap.rect(), Qt.AlignCenter, "Camera stopped")  
-        painter.end()  
-        self.resultDisplay.label.setPixmap(pixmap)   
+        self.setCameraBlack()
+
   
     def analyze_files(self):    
         file1 = self.dropbox1.file_path    
@@ -116,3 +106,13 @@ class MainWindow(QMainWindow):
     
     def change_camera(self, index):  
         self.video_thread.set_camera_index(index)  
+
+    def setCameraBlack(self):
+        pixmap = QPixmap(self.resultDisplay.label.size())  
+        pixmap.fill(QColor('black'))  
+        painter = QPainter(pixmap)  
+        painter.setFont(QFont('Arial', 30))  
+        painter.setPen(QColor('white'))  
+        painter.drawText(pixmap.rect(), Qt.AlignCenter, "Camera stopped")  
+        painter.end()  
+        self.resultDisplay.label.setPixmap(pixmap)   

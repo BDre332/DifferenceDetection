@@ -33,7 +33,13 @@ class VideoThread(QThread):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
-
+            
+    def start_video(self):  
+        if not self.video_thread.isRunning():  # Only start the video thread if it's not already running  
+            self.video_thread = VideoThread()  # Create a new VideoThread object  
+            self.video_thread.change_pixmap_signal.connect(self.update_image)  # Connect the signal to the slot  
+            self.video_thread.start()  # Start the video thread 
+        
     def set_camera_index(self, index):
         self.camera_index = index
         if self._run_flag:
